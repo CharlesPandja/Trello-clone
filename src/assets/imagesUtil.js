@@ -1,0 +1,8 @@
+export { default as tableauxIcon} from '../assets/tableaux.png'
+export { default as modelesIcon} from '../assets/modeles.png'
+export { default as homeIcon} from '../assets/home.png'
+export { default as workIcon} from '../assets/workSpace.png'
+export { default as uneIcon} from '../assets/unes.png'
+export { default as membersIcon} from '../assets/members.png'
+export { default as parametersIcon} from '../assets/parameters.png'
+export { default as bagIcon} from '../assets/bagIcon.png'
