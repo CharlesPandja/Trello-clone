@@ -1,6 +1,6 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import { HomePage, Templates, Root, Boards, ErrorPage} from './pages/pagesUtil';
+import { HomePage, Templates, Root, Boards, ErrorPage, BoardRoot, BoardDetails} from './pages/pagesUtil';
 
 const App = () => {
 
@@ -11,7 +11,12 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage />},
       { path: 'templates', element: <Templates />},
-      { path: 'boards', element: <Boards />},
+      { path: 'boards', element: <BoardRoot />,
+        children: [
+          {index: true, element: <Boards />},
+          {path: ':detailId', element: <BoardDetails />},
+        ]
+      },
       
     ]
   }

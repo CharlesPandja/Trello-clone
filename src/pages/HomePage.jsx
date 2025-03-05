@@ -4,7 +4,7 @@ import timeIcon from '../assets/timeIcon.png';
 import notifBackground from '../assets/bgNotification.jpg';
 import linkIcon from '../assets/linkIcon.png';
 import ModalTableau from '../components/ModalTableau.jsx';
-import { openModal, closeModal } from '../store/modalSlice.js'
+import { openModal } from '../store/modalSlice.js'
 import { useSelector, useDispatch } from 'react-redux';
 
 const HomePage = () => {

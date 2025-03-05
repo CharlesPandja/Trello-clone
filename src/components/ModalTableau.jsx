@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addTableauToSidebar } from '../store/modalSlice.js';
 import { backgroundColors } from './util/backgroundColors.js';
 
-const ModalTableau = forwardRef((isViewed, ref) => {
+const ModalTableau = forwardRef(({isViewed}, ref) => {
     const [modalContent, setModalContent] = useState({
         id: null,
         titre: '',

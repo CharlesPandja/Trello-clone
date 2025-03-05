@@ -3,7 +3,7 @@ import SidebarBtn from './SidebarBtn';
 import { bagIcon, tableauxIcon, modelesIcon, homeIcon, workIcon, uneIcon, membersIcon, parametersIcon } from '../assets/imagesUtil.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeItemToSidebar } from '../store/modalSlice.js';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 const Sidebar = () => {
     const [isVisibleWorkspace, setIsVisibleWorkspace] = useState(false);
     const [isVisibleTableau, setIsVisibleTableau] = useState(false);
@@ -40,7 +40,7 @@ const Sidebar = () => {
 
                 {tableauSidebar && isVisibleTableau && tableauSidebar.map((element) =>
                     <div key={element.id} className="mb-1 flex justify-between items-center text-stone-200 p-2 gap-3 w-full text-sm font-medium hover:bg-stone-600 rounded-md">
-                        <p>{element.titre}</p>
+                        <Link to={`/boards/${element.titre}`}>{element.titre}</Link>
                         <button onClick={() => handleRemoveItem(element.id)} className="bg-zinc-800 px-2 py-1 rounded-sm cursor-pointer">-</button>
                     </div>)}
 
