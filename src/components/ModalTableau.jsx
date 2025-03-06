@@ -36,7 +36,7 @@ const ModalTableau = forwardRef(({isViewed}, ref) => {
     const dispatch = useDispatch()
     function handleSendToStore() {
         dispatch(addTableauToSidebar({
-            id: modalContent.id === null ? 1 : modalContent.id + 1,
+            idTableau: modalContent.id === null ? 1 : modalContent.id + 1,
             titre: modalContent.titre,
             visibility: modalContent.visibility,
             backgroundColor: color

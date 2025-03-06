@@ -20,8 +20,8 @@ const Sidebar = () => {
     const tableauSidebar = useSelector(state => state.modal.tableauSidebar)
 
     function handleRemoveItem(itemId) {
-            dispatch(removeItemToSidebar({id: itemId}));
-        }
+        dispatch(removeItemToSidebar({ id: itemId }));
+    }
 
 
     const menuSidebar = [
@@ -40,13 +40,16 @@ const Sidebar = () => {
 
                 {tableauSidebar && isVisibleTableau && tableauSidebar.map((element) =>
                     <div key={element.id} className="mb-1 flex justify-between items-center text-stone-200 p-2 gap-3 w-full text-sm font-medium hover:bg-stone-600 rounded-md">
-                        <Link to={`/boards/${element.titre}`}>{element.titre}</Link>
+                        <div className="flex justify-center items-center gap-2">
+                            <div className={`${element.backgroundColor} rounded-xs w-8 h-6`} ></div>
+                            <Link to={`/boards/${element.titre}`}>{element.titre}</Link>
+                        </div>
                         <button onClick={() => handleRemoveItem(element.id)} className="bg-zinc-800 px-2 py-1 rounded-sm cursor-pointer">-</button>
                     </div>)}
 
 
                 <SidebarBtn source={modelesIcon} name="modele icon">Modèles</SidebarBtn>
-                <SidebarBtn source={homeIcon} name="array icon" isActive>Accueil</SidebarBtn>
+                <SidebarBtn source={homeIcon} name="array icon">Accueil</SidebarBtn>
             </div>
             <div className="mt-4">
                 <p className="text-xs font-semibold text-stone-200 mb-3">Espace de travail</p>
