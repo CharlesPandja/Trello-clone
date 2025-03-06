@@ -4,8 +4,6 @@ import timeIcon from '../assets/timeIcon.png';
 import notifBackground from '../assets/bgNotification.jpg';
 import linkIcon from '../assets/linkIcon.png';
 import ModalTableau from '../components/ModalTableau.jsx';
-import { openModal } from '../store/modalSlice.js'
-import { useSelector, useDispatch } from 'react-redux';
 
 const HomePage = () => {
   const lastViewed = []
@@ -13,13 +11,7 @@ const HomePage = () => {
 
   const modalRef = useRef()
 
-
-  const dispatch = useDispatch()
-  const modalIsVisible = useSelector(state => state.modal.modalIsVisible)
-
   function handleModalTableau() {
-    dispatch(openModal())
-    // show modal using the exported function within the modal component with help of useImperativeHandle() methods
     if (modalRef.current) {
       modalRef.current.openDialog()
     }
@@ -64,7 +56,7 @@ const HomePage = () => {
           </div>
         </section>
       </div>
-      <ModalTableau isViewed={modalIsVisible} ref={modalRef} />
+      <ModalTableau ref={modalRef} />
     </main>
   )
 }

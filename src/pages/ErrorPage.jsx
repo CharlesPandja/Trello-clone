@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
+import { Link } from 'react-router-dom';
 const ErrorPage = () => {
     return (
         <div>
@@ -8,7 +9,7 @@ const ErrorPage = () => {
                 <div className="text-center text-stone-200 px-30">
                     <h1 className="text-3xl mb-5">Page introuvable</h1>
                     <p className="text-base mb-5">Il se peut que cette page soit privée. Si quelqu'un vous a envoyé ce lien, il se peut que vous deviez être membre de l'espace de travail ou du tableau pour pouvoir y accéder.</p>
-                    <button className="h-10 px-3 text-black/80 bg-blue-400 text-base rounded-sm cursor-pointer hover:bg-blue-300">Aller à l'accueil</button>
+                    <button className="h-10 px-3 text-black/80 bg-blue-400 text-base rounded-sm cursor-pointer hover:bg-blue-300"><Link to='/'>Aller à l'accueil</Link> </button>
                 </div>
             </div>
         </div>

@@ -1,24 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-const initialState = { modalIsVisible: false, tableauSidebar: [] }
+const initialState = { tableauSidebar: [] }
 
 const modalSlice = createSlice({
     name: 'modalTableau',
     initialState,
     reducers: {
-        openModal(state) {
-            state.modalIsVisible = true;
-        },
-        closeModal(state) {
-            state.modalIsVisible = false;
-        },
+        // Add a new tableau to the sidebar
         addTableauToSidebar(state, action) {
             state.tableauSidebar.push(action.payload);
         },
 
+        // Remove an item(tableau) from the sidebar
         removeItemToSidebar(state, action) {
             state.tableauSidebar = state.tableauSidebar.filter(item => item.idTableau !== action.payload.idTableau);
         },
+
+        // Add a new list to the selected tableau in the sidebar
         addListeToTableau(state, action) {
             const selectedTableau = state.tableauSidebar.find(tableau => tableau.idTableau === action.payload.idTableau)
             

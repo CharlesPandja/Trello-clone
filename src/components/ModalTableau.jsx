@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addTableauToSidebar } from '../store/modalSlice.js';
 import { backgroundColors } from './util/backgroundColors.js';
 
-const ModalTableau = forwardRef(({isViewed}, ref) => {
+const ModalTableau = forwardRef(({}, ref) => {
     const [modalContent, setModalContent] = useState({
         id: null,
         titre: '',
@@ -25,13 +25,9 @@ const ModalTableau = forwardRef(({isViewed}, ref) => {
         dialogRef.current.close()
     }
 
-    function handleTitre() {
-        setModalContent(prevModal => ({ ...prevModal, titre: titreRef.current.value }))
-    }
+    const handleTitre = () => setModalContent(prevModal => ({ ...prevModal, titre: titreRef.current.value }))
 
-    function handleVisibility() {
-        setModalContent(prevModal => ({ ...prevModal, visibility: visibilityRef.current.value }))
-    }
+    const handleVisibility = () => setModalContent(prevModal => ({ ...prevModal, visibility: visibilityRef.current.value }))
 
     const dispatch = useDispatch()
     function handleSendToStore() {
@@ -41,8 +37,8 @@ const ModalTableau = forwardRef(({isViewed}, ref) => {
             visibility: modalContent.visibility,
             backgroundColor: color
         }))
-        setModalContent(prevState => ({ ...prevState, id: prevState.id + 1, titre: '', visibility: '' }))
-        setColor('')
+        setModalContent(prevState => ({ ...prevState, id: prevState.id + 1 }))
+        setColor('bg-blue-500')
     }
 
     function handleColor(color){
@@ -56,7 +52,7 @@ const ModalTableau = forwardRef(({isViewed}, ref) => {
 
         <dialog ref={dialogRef} className="absolute top-15 left-3/8 w-1/4 p-4 bg-zinc-800 text-stone-200 rounded-lg border-1 border-zinc-900">
             <div className="flex justify-between items-center mb-4">
-                <button className={`${isViewed ? 'bg-transparant mr-12' : 'bg-transparant font-medium hover:bg-stone-600 p-2 text-sm cursor-pointer rounded-lg'}`}>{isViewed ? '' : 'Retour'}</button>
+                {/* <button className={`${isViewed ? 'bg-transparant mr-12' : 'bg-transparant font-medium hover:bg-stone-600 p-2 text-sm cursor-pointer rounded-lg'}`}>{isViewed ? '' : 'Retour'}</button> */}
                 <h2 className="text-sm font-semibold">Créer un tableau</h2>
                 <button onClick={handleCloseModal} className="bg-transparant font-medium hover:bg-stone-600 p-2 text-sm cursor-pointer rounded-lg">Fermer</button>
             </div>
