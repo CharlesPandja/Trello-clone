@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { addListeToTableau } from '../store/modalSlice.js';
+import { addListeToTableau, addCardToListeOfTableau } from '../store/modalSlice.js';
 import CloseCartBtn from '../components/Carte/CloseCartBtn.jsx';
 import AddCartBtn from '../components/Carte/AddCartBtn.jsx';
 
@@ -9,6 +9,7 @@ const BoardDetails = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isVisibleCarte, setIsVisibleCarte] = useState({});
   const [liste, setListe] = useState({ idListe: null, titreListe: '' });
+  const [carte, setCarte] = useState({ idCarte: null, titreCarte: '' })
 
   const params = useParams();
   const dispatch = useDispatch();
@@ -21,8 +22,8 @@ const BoardDetails = () => {
   );
 
   // Handle idListe incrementation for avoiding clashes in different tableaux
-  const tableauWithListes = useMemo(()=>tableauSidebar.filter(element => element?.liste.length > 0), [tableauSidebar])
-  const idListeIncremented = useMemo(()=>tableauWithListes.reduce((acc, current) => acc + current.liste.length, 0), [tableauWithListes])
+  const tableauWithListes = useMemo(() => tableauSidebar.filter(element => element?.liste.length > 0), [tableauSidebar])
+  const idListeIncremented = useMemo(() => tableauWithListes.reduce((acc, current) => acc + current.liste.length, 0), [tableauWithListes])
 
   // Handle input change for list title
   const handleTitreListe = (e) => {
@@ -39,13 +40,33 @@ const BoardDetails = () => {
     dispatch(addListeToTableau({
       idTableau: selectedTableau.idTableau,
       idListe: idListeIncremented,
-      titreListe: liste.titreListe
+      titreListe: liste.titreListe,
+      carte: []
     }));
 
     setListe({ idListe: null, titreListe: '' });
   };
 
-  const handleVisibilityCarte = (idListe) => setIsVisibleCarte(prev => ({...prev, [idListe] : !prev[idListe]}));
+  const handleVisibilityCarte = (idListe) => setIsVisibleCarte(prev => ({ ...prev, [idListe]: !prev[idListe] }));
+
+  const handleTitreCarte = (e) => setCarte(prev => ({ ...prev, titreCarte: e.target.value }))
+
+  // Dispatch action to add a new carte in a list
+  const handleSubmissionCarte = (id) => {
+    const selectedListes = selectedTableau.liste.filter(liste => liste.carte.length > 0)
+    console.table(selectedListes)
+    const idCarteIncremented = selectedListes.reduce((acc, curr) => acc + curr.carte.length, 0)
+    if (!selectedListes || !carte.titreCarte.trim()) return;
+
+    dispatch(addCardToListeOfTableau({
+      idTableau: selectedTableau.idTableau,
+      idListe: id,
+      idCarte: idCarteIncremented,
+      titreCarte: carte.titreCarte
+    }))
+
+    setCarte(prev => ({ ...prev, idCarte: prev.idCarte + 1, titreCarte: '' }))
+  }
 
   return (
     <main className={`${selectedTableau.backgroundColor} w-3/4 min-h-screen overflow-hidden`}>
@@ -65,10 +86,21 @@ const BoardDetails = () => {
                 className="w-full px-3 font-semibold bg-transparent mb-3 text-base outline-none"
                 defaultValue={titreListe}
               />
+              {selectedTableau.liste.find(liste => liste.idListe === idListe).carte.map(carte =>
+                <div key={carte.idCarte} className="w-full p-2 bg-stone-600 mb-2 rounded-lg">
+                  {carte.titreCarte}
+                </div>
+              )}
               {isVisibleCarte[idListe] &&
                 <div>
-                  <textarea placeholder="Saisissez un titre ou copiez un lien" className="w-full text-sm border-2 border-green-300 outline-none h-16 px-3 rounded-sm mb-2" />
-                  <AddCartBtn>Ajouter une carte</AddCartBtn>
+                  <textarea value={carte.titreCarte} onChange={handleTitreCarte} placeholder="Saisissez un titre ou copiez un lien" className="w-full text-sm border-2 border-green-300 outline-none h-16 px-3 rounded-sm mb-2" />
+                  <button
+                    onClick={() => handleSubmissionCarte(idListe)}
+                    className="text-sm text-black rounded-sm cursor-pointer bg-blue-400 px-4 py-2 hover:bg-blue-300 mr-2"
+                    type="button"
+                  >
+                    Ajouter une carte
+                  </button>
                   <CloseCartBtn onClose={() => handleVisibilityCarte(idListe)}>Fermer</CloseCartBtn>
                 </div>
               }
