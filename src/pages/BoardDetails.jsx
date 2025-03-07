@@ -7,7 +7,7 @@ import AddCartBtn from '../components/Carte/AddCartBtn.jsx';
 
 const BoardDetails = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [isVisibleCarte, setIsVisibleCarte] = useState(false);
+  const [isVisibleCarte, setIsVisibleCarte] = useState({});
   const [liste, setListe] = useState({ idListe: null, titreListe: '' });
 
   const params = useParams();
@@ -21,9 +21,8 @@ const BoardDetails = () => {
   );
 
   // Handle idListe incrementation for avoiding clashes in different tableaux
-  const tableauWithListes = tableauSidebar.filter(element => element?.liste.length > 0)
-  const idListeIncremented = tableauWithListes.reduce((acc, current) => acc + current.liste.length, 0)
-  console.log('idListe incrementé : ' + idListeIncremented)
+  const tableauWithListes = useMemo(()=>tableauSidebar.filter(element => element?.liste.length > 0), [tableauSidebar])
+  const idListeIncremented = useMemo(()=>tableauWithListes.reduce((acc, current) => acc + current.liste.length, 0), [tableauWithListes])
 
   // Handle input change for list title
   const handleTitreListe = (e) => {
@@ -46,7 +45,7 @@ const BoardDetails = () => {
     setListe({ idListe: null, titreListe: '' });
   };
 
-  const handleVisibilityCarte = () => setIsVisibleCarte(prevState => !prevState)
+  const handleVisibilityCarte = (idListe) => setIsVisibleCarte(prev => ({...prev, [idListe] : !prev[idListe]}));
 
   return (
     <main className={`${selectedTableau.backgroundColor} w-3/4 min-h-screen overflow-hidden`}>
@@ -66,14 +65,14 @@ const BoardDetails = () => {
                 className="w-full px-3 font-semibold bg-transparent mb-3 text-base outline-none"
                 defaultValue={titreListe}
               />
-              {isVisibleCarte &&
+              {isVisibleCarte[idListe] &&
                 <div>
                   <textarea placeholder="Saisissez un titre ou copiez un lien" className="w-full text-sm border-2 border-green-300 outline-none h-16 px-3 rounded-sm mb-2" />
                   <AddCartBtn>Ajouter une carte</AddCartBtn>
-                  <CloseCartBtn onClose={handleVisibilityCarte}>Fermer</CloseCartBtn>
+                  <CloseCartBtn onClose={() => handleVisibilityCarte(idListe)}>Fermer</CloseCartBtn>
                 </div>
               }
-              {!isVisibleCarte && <button onClick={handleVisibilityCarte} className="text-sm text-white rounded-sm cursor-pointer px-4 py-2 hover:bg-stone-200 hover:text-black" type="button">
+              {!isVisibleCarte[idListe] && <button onClick={() => handleVisibilityCarte(idListe)} className="text-sm text-white rounded-sm cursor-pointer px-4 py-2 hover:bg-stone-200 hover:text-black" type="button">
                 + Ajouter une carte
               </button>}
             </form>
