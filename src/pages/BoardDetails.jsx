@@ -2,9 +2,12 @@ import React, { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { addListeToTableau } from '../store/modalSlice.js';
+import CloseCartBtn from '../components/Carte/CloseCartBtn.jsx';
+import AddCartBtn from '../components/Carte/AddCartBtn.jsx';
 
 const BoardDetails = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isVisibleCarte, setIsVisibleCarte] = useState(false);
   const [liste, setListe] = useState({ idListe: null, titreListe: '' });
 
   const params = useParams();
@@ -13,14 +16,14 @@ const BoardDetails = () => {
 
   // Memoize selected tableau to avoid unnecessary re-renders
   const selectedTableau = useMemo(
-    () => tableauSidebar.find(element => element.idTableau === Number(params.detailId)), 
+    () => tableauSidebar.find(element => element.idTableau === Number(params.detailId)),
     [tableauSidebar, params.detailId]
   );
 
   // Handle idListe incrementation for avoiding clashes in different tableaux
-  const tableauWithListes = tableauSidebar.filter(element => element.liste.length > 0)
+  const tableauWithListes = tableauSidebar.filter(element => element?.liste.length > 0)
   const idListeIncremented = tableauWithListes.reduce((acc, current) => acc + current.liste.length, 0)
-  console.log(idListeIncremented)
+  console.log('idListe incrementé : ' + idListeIncremented)
 
   // Handle input change for list title
   const handleTitreListe = (e) => {
@@ -43,6 +46,8 @@ const BoardDetails = () => {
     setListe({ idListe: null, titreListe: '' });
   };
 
+  const handleVisibilityCarte = () => setIsVisibleCarte(prevState => !prevState)
+
   return (
     <main className={`${selectedTableau.backgroundColor} w-3/4 min-h-screen overflow-hidden`}>
       <div className="mt-12 text-white">
@@ -56,14 +61,21 @@ const BoardDetails = () => {
           {/* Render Existing Lists */}
           {selectedTableau.liste?.map(({ idListe, titreListe }) => (
             <form key={idListe} className="w-[250px] bg-neutral-900 p-2 rounded-lg text-stone-200">
-              <input 
-                type="text" 
-                className="w-full px-3 font-semibold bg-transparent mb-3 text-base outline-none" 
-                defaultValue={titreListe} 
+              <input
+                type="text"
+                className="w-full px-3 font-semibold bg-transparent mb-3 text-base outline-none"
+                defaultValue={titreListe}
               />
-              <button className="text-sm text-white rounded-sm cursor-pointer px-4 py-2 hover:bg-stone-200 hover:text-black" type="button">
+              {isVisibleCarte &&
+                <div>
+                  <textarea placeholder="Saisissez un titre ou copiez un lien" className="w-full text-sm border-2 border-green-300 outline-none h-16 px-3 rounded-sm mb-2" />
+                  <AddCartBtn>Ajouter une carte</AddCartBtn>
+                  <CloseCartBtn onClose={handleVisibilityCarte}>Fermer</CloseCartBtn>
+                </div>
+              }
+              {!isVisibleCarte && <button onClick={handleVisibilityCarte} className="text-sm text-white rounded-sm cursor-pointer px-4 py-2 hover:bg-stone-200 hover:text-black" type="button">
                 + Ajouter une carte
-              </button>
+              </button>}
             </form>
           ))}
 
@@ -71,31 +83,27 @@ const BoardDetails = () => {
           <div className="w-[250px]">
             {isVisible ? (
               <form className="bg-neutral-900 p-2 rounded-lg text-stone-200">
-                <input 
-                  value={liste.titreListe} 
-                  onChange={handleTitreListe} 
-                  className="w-full text-sm bg-zinc-900 border-2 border-green-300 outline-none h-9 px-3 rounded-sm mb-2" 
-                  type="text" 
-                  placeholder="Nom de la liste" 
+                <input
+                  value={liste.titreListe}
+                  onChange={handleTitreListe}
+                  className="w-full text-sm bg-zinc-900 border-2 border-green-300 outline-none h-9 px-3 rounded-sm mb-2"
+                  type="text"
+                  placeholder="Nom de la liste"
                 />
-                <button 
-                  onClick={handleSubmissionListe} 
-                  className="text-sm text-black rounded-sm cursor-pointer bg-blue-400 px-4 py-2 hover:bg-blue-300 mr-2" 
-                  type="button"
+                <AddCartBtn
+                  onAdd={handleSubmissionListe}
                 >
                   Ajouter une liste
-                </button>
-                <button 
-                  onClick={toggleVisibility} 
-                  className="text-sm text-white rounded-sm cursor-pointer px-4 py-2 hover:bg-stone-200 hover:text-black" 
-                  type="button"
+                </AddCartBtn>
+                <CloseCartBtn
+                  onClose={toggleVisibility}
                 >
                   Fermer
-                </button>
+                </CloseCartBtn>
               </form>
             ) : (
-              <button 
-                onClick={toggleVisibility} 
+              <button
+                onClick={toggleVisibility}
                 className="w-full cursor-pointer font-semibold rounded-lg text-sm px-4 py-2 bg-stone-400/50"
               >
                 + Ajouter une liste

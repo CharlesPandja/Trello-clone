@@ -29,6 +29,17 @@ const modalSlice = createSlice({
                     titreListe: action.payload.titreListe
                 })
             }
+        },
+
+        // Add a new card to a specific liste of a tableau
+        addCardToListeOfTableau(state, action){
+            const selectedTableau = state.tableauSidebar.find(tableau => tableau.idTableau === action.payload.idTableau)
+            const selectedListe = selectedTableau.liste.find(liste => liste.idListe === action.payload.idListe)
+            if(!selectedListe.carte) return selectedListe.carte = [];
+            selectedListe.carte.push({
+                idCarte : action.payload.idCarte,
+                titreCarte: action.payload.titreCarte
+            })
         }
     }
 })
