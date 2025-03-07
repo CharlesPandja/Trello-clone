@@ -35,9 +35,10 @@ const ModalTableau = forwardRef(({}, ref) => {
             idTableau: modalContent.id === null ? 1 : modalContent.id + 1,
             titre: modalContent.titre,
             visibility: modalContent.visibility,
-            backgroundColor: color
+            backgroundColor: color,
+            liste: []
         }))
-        setModalContent(prevState => ({ ...prevState, id: prevState.id + 1 }))
+        setModalContent(prevState => ({ ...prevState, id: prevState.id + 1, titre: prevState.titre && ''}))
         setColor('bg-blue-500')
     }
 
@@ -46,7 +47,7 @@ const ModalTableau = forwardRef(({}, ref) => {
     }
 
     const tableauSidebar = useSelector(state => state.modal.tableauSidebar)
-    console.log(tableauSidebar)
+    console.table(tableauSidebar)
 
     return (
 

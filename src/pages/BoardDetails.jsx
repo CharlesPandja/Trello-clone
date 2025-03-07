@@ -17,21 +17,26 @@ const BoardDetails = () => {
     [tableauSidebar, params.detailId]
   );
 
-  // 🔹 Handle input change for list title
+  // Handle idListe incrementation for avoiding clashes in different tableaux
+  const tableauWithListes = tableauSidebar.filter(element => element.liste.length > 0)
+  const idListeIncremented = tableauWithListes.reduce((acc, current) => acc + current.liste.length, 0)
+  console.log(idListeIncremented)
+
+  // Handle input change for list title
   const handleTitreListe = (e) => {
     setListe(prev => ({ ...prev, titreListe: e.target.value }));
   };
 
-  // 🔹 Toggle visibility of the add-list form
+  // Toggle visibility of the add-list form
   const toggleVisibility = () => setIsVisible(prev => !prev);
 
-  // 🔹 Dispatch action to add a new list
+  // Dispatch action to add a new list
   const handleSubmissionListe = () => {
     if (!selectedTableau || !liste.titreListe.trim()) return;
 
     dispatch(addListeToTableau({
       idTableau: selectedTableau.idTableau,
-      idListe: selectedTableau.liste ? selectedTableau.liste.length + 1 : 1,
+      idListe: idListeIncremented,
       titreListe: liste.titreListe
     }));
 
@@ -55,9 +60,8 @@ const BoardDetails = () => {
                 type="text" 
                 className="w-full px-3 font-semibold bg-transparent mb-3 text-base outline-none" 
                 defaultValue={titreListe} 
-                readOnly
               />
-              <button className="text-sm text-white rounded-sm cursor-pointer px-4 py-2 hover:bg-stone-200 hover:text-black">
+              <button className="text-sm text-white rounded-sm cursor-pointer px-4 py-2 hover:bg-stone-200 hover:text-black" type="button">
                 + Ajouter une carte
               </button>
             </form>
