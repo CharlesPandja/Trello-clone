@@ -11,6 +11,13 @@ const modalSlice = createSlice({
             state.tableauSidebar.push(action.payload);
         },
 
+        // Update the title of an existing tableau in the sidebar
+        updateTableauToSidebar(state, action) {
+            const selectedTableau = state.tableauSidebar.find(tableau => tableau.idTableau === action.payload.idTableau)
+            const updatedTableau = { ...selectedTableau, titre: action.payload.titre }
+            state.tableauSidebar = state.tableauSidebar.map(tableau => tableau.idTableau === updatedTableau.idTableau ? updatedTableau : tableau)
+        },
+
         // Remove an item(tableau) from the sidebar
         removeItemToSidebar(state, action) {
             state.tableauSidebar = state.tableauSidebar.filter(item => item.idTableau !== action.payload.idTableau);
@@ -25,6 +32,17 @@ const modalSlice = createSlice({
                     selectedTableau.liste = [];
                 }
                 selectedTableau.liste.push(action.payload)
+            }
+        },
+
+        // Update specific liste of a selected tableau
+        updateListeOfTableau(state, action) {
+            const selectedTableau = state.selectedTableau.find(tableau => tableau.idTableau === action.payload.idTableau)
+            if (selectedTableau) {
+                const selectedListe = selectedTableau.liste.find(liste => liste.idListe === action.payload.idListe)
+                const updatedListe = { ...selectedListe, titreListe: action.payload.titreListe }
+                const updatedSelectedTableau = selectedTableau.liste.map(liste => liste.idListe === updatedListe.idListe ? updatedListe : liste)
+                state.tableauSidebar = state.tableauSidebar.map(tableau => tableau.idTableau === updatedSelectedTableau.idTableau ? updatedSelectedTableau : tableau)
             }
         },
 
@@ -43,5 +61,5 @@ const modalSlice = createSlice({
 
 const modalReducer = modalSlice.reducer
 
-export const { openModal, closeModal, addTableauToSidebar, removeItemToSidebar, addListeToTableau, addCardToListeOfTableau } = modalSlice.actions
+export const { addTableauToSidebar, updateTableauToSidebar, removeItemToSidebar, addListeToTableau, updateListeOfTableau, addCardToListeOfTableau } = modalSlice.actions
 export default modalReducer

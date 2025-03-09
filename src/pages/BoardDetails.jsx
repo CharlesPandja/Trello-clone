@@ -1,13 +1,14 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { addListeToTableau, addCardToListeOfTableau } from '../store/modalSlice.js';
+import { updateTableauToSidebar, addListeToTableau, updateListeOfTableau, addCardToListeOfTableau } from '../store/modalSlice.js';
 import CloseCartBtn from '../components/Carte/CloseCartBtn.jsx';
 import AddCartBtn from '../components/Carte/AddCartBtn.jsx';
 
 const BoardDetails = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isVisibleCarte, setIsVisibleCarte] = useState({});
+  const [tableau, setTableau] = useState({});
   const [liste, setListe] = useState({ idListe: null, titreListe: '' });
   const [carte, setCarte] = useState({ idCarte: null, titreCarte: '' })
 
@@ -21,14 +22,17 @@ const BoardDetails = () => {
     [tableauSidebar, params.detailId]
   );
 
+  useEffect(() => setTableau(selectedTableau), [selectedTableau])
+
+  console.table(selectedTableau)
+
   // Handle idListe incrementation for avoiding clashes in different tableaux
   const tableauWithListes = useMemo(() => tableauSidebar.filter(element => element?.liste.length > 0), [tableauSidebar])
   const idListeIncremented = useMemo(() => tableauWithListes.reduce((acc, current) => acc + current.liste.length, 0), [tableauWithListes])
 
   // Handle input change for list title
-  const handleTitreListe = (e) => {
-    setListe(prev => ({ ...prev, titreListe: e.target.value }));
-  };
+  // const handleTitreListe = (e) => setListe(prev => ({ ...prev, titreListe: e.target.value }));
+
 
   // Toggle visibility of the add-list form
   const toggleVisibility = () => setIsVisible(prev => !prev);
@@ -47,9 +51,21 @@ const BoardDetails = () => {
     setListe({ idListe: null, titreListe: '' });
   };
 
+  // const handleChangeTitreListe = (e, idListe) => {
+
+  //   dispatch(updateListeOfTableau({
+  //     idTableau: selectedTableau.idTableau,
+  //     idListe: idListe,
+  //     titreListe: e.target.value
+  //   }))
+  // }
+
   const handleVisibilityCarte = (idListe) => setIsVisibleCarte(prev => ({ ...prev, [idListe]: !prev[idListe] }));
 
   const handleTitreCarte = (e) => setCarte(prev => ({ ...prev, titreCarte: e.target.value }))
+
+  const handleUpdateTableau = (e) => setTableau(prev => ({ ...prev, titre: e.target.value }))
+
 
   // Dispatch action to add a new carte in a list
   const handleSubmissionCarte = (id) => {
@@ -73,7 +89,7 @@ const BoardDetails = () => {
       <div className="mt-12 text-white">
         {/* Board Title */}
         <div className="pl-12 pt-5 w-full h-16 bg-zinc-800/60 font-bold mb-4">
-          {selectedTableau.titre}
+          <input type="text" className="bg-transparent outline-none cursor-pointer" value={selectedTableau.titre} onChange={handleUpdateTableau} />
         </div>
 
         {/* Lists & Add List Section */}
@@ -81,10 +97,12 @@ const BoardDetails = () => {
           {/* Render Existing Lists */}
           {selectedTableau.liste?.map(({ idListe, titreListe }) => (
             <form key={idListe} className="w-[250px] bg-neutral-900 p-2 rounded-lg text-stone-200">
+              {/* List title */}
               <input
                 type="text"
-                className="w-full px-3 font-semibold bg-transparent mb-3 text-base outline-none"
-                defaultValue={titreListe}
+                className="w-full px-3 cursor-pointer font-semibold bg-transparent mb-3 text-base outline-none"
+                value={titreListe}
+                // onChange={(e) => handleChangeTitreListe(idListe, e)}
               />
               {selectedTableau.liste.find(liste => liste.idListe === idListe).carte.map(carte =>
                 <div key={carte.idCarte} className="w-full p-2 bg-stone-600 mb-2 rounded-lg">
@@ -96,7 +114,7 @@ const BoardDetails = () => {
                   <textarea value={carte.titreCarte} onChange={handleTitreCarte} placeholder="Saisissez un titre ou copiez un lien" className="w-full text-sm border-2 border-green-300 outline-none h-16 px-3 rounded-sm mb-2" />
                   <button
                     onClick={() => handleSubmissionCarte(idListe)}
-                    className="text-sm text-black rounded-sm cursor-pointer bg-blue-400 px-4 py-2 hover:bg-blue-300 mr-2"
+                    className="text-sm text-black rounded-sm bg-blue-400 px-4 py-2 hover:bg-blue-300 mr-2"
                     type="button"
                   >
                     Ajouter une carte
@@ -117,7 +135,7 @@ const BoardDetails = () => {
                 <input
                   value={liste.titreListe}
                   onChange={handleTitreListe}
-                  className="w-full text-sm bg-zinc-900 border-2 border-green-300 outline-none h-9 px-3 rounded-sm mb-2"
+                  className="w-full text-sm bg-zinc-900 cursor-pointer border-2 border-green-300 outline-none h-9 px-3 rounded-sm mb-2"
                   type="text"
                   placeholder="Nom de la liste"
                 />
