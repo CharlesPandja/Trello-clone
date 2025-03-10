@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateTableauToSidebar, addListeToTableau, addCardToListeOfTableau } from '../store/modalSlice.js';
+import { updateTableauToSidebar, addListeToTableau, addCardToListeOfTableau, updateListeOfTableau } from '../store/modalSlice.js';
 import CloseCartBtn from '../components/Carte/CloseCartBtn.jsx';
 import AddCartBtn from '../components/Carte/AddCartBtn.jsx';
 import LoadingIndicator from '../components/UI/LoadingIndicator.jsx';
@@ -10,6 +10,7 @@ const BoardDetails = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isVisibleCarte, setIsVisibleCarte] = useState({});
   const [tableau, setTableau] = useState(null);
+  const [listes, setListes] = useState([]);
   const [liste, setListe] = useState({ idListe: null, titreListe: '' });
   const [carte, setCarte] = useState({ idCarte: null, titreCarte: '' });
 
@@ -28,6 +29,13 @@ const BoardDetails = () => {
       setTableau(selectedTableau);
     }
   }, [selectedTableau]);
+
+  // Updating of listes object using useEffect
+  useEffect(() => {
+    if (selectedTableau && selectedTableau.liste) {
+      setListes(selectedTableau.liste);
+    }
+  }, [selectedTableau])
 
   // Handle updating board title
   const handleUpdateTableau = (e) => {
@@ -67,6 +75,19 @@ const BoardDetails = () => {
     setListe({ idListe: null, titreListe: '' });
   };
 
+  // Update the title of a list in a tableau
+  const handleChangeTitreListe = (e, index) => {
+    const updatedListes = listes.map(liste => liste.idListe === index ? { ...liste, titreListe: e.target.value } : liste)
+
+    dispatch(updateListeOfTableau({
+      idTableau: selectedTableau.idTableau,
+      idListe: index,
+      titreListe: e.target.value
+    }))
+
+    setListes(updatedListes)
+  }
+
   // Toggle card visibility for a list
   const handleVisibilityCarte = (idListe) => {
     setIsVisibleCarte(prev => ({ ...prev, [idListe]: !prev[idListe] }));
@@ -101,22 +122,22 @@ const BoardDetails = () => {
       <div className="mt-12 text-white">
         {/* Board Title */}
         <div className="pl-12 pt-5 w-full h-16 bg-zinc-800/60 font-bold mb-4">
-          <input type="text" className="bg-transparent outline-none cursor-pointer" value={selectedTableau.titre} onChange={handleUpdateTableau} />
+          <input type="text" className="bg-transparent outline-none cursor-pointer" value={selectedTableau?.titre || ''} onChange={handleUpdateTableau} />
         </div>
 
         {/* Lists & Add List Section */}
         <div className="pl-12 flex flex-wrap gap-3 items-start">
           {/* Render Existing Lists */}
-          {selectedTableau.liste?.map(({ idListe, titreListe }) => (
+          {listes.map(({ idListe, titreListe }) => (
             <form key={idListe} className="w-[250px] bg-neutral-900 p-2 rounded-lg text-stone-200">
               {/* List title */}
               <input
                 type="text"
                 className="w-full px-3 cursor-pointer font-semibold bg-transparent mb-3 text-base outline-none"
-                value={titreListe}
-                // onChange={(e) => handleChangeTitreListe(idListe, e)}
+                value={titreListe || ''}
+                onChange={() => handleChangeTitreListe(idListe)}
               />
-              {selectedTableau.liste.find(liste => liste.idListe === idListe).carte.map(carte =>
+              {listes.find(liste => liste.idListe === idListe).carte.map(carte =>
                 <div key={carte.idCarte} className="w-full p-2 bg-stone-600 mb-2 rounded-lg">
                   {carte.titreCarte}
                 </div>
