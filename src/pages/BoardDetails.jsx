@@ -1,43 +1,59 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateTableauToSidebar, addListeToTableau, updateListeOfTableau, addCardToListeOfTableau } from '../store/modalSlice.js';
+import { updateTableauToSidebar, addListeToTableau, addCardToListeOfTableau } from '../store/modalSlice.js';
 import CloseCartBtn from '../components/Carte/CloseCartBtn.jsx';
 import AddCartBtn from '../components/Carte/AddCartBtn.jsx';
+import LoadingIndicator from '../components/UI/LoadingIndicator.jsx';
 
 const BoardDetails = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isVisibleCarte, setIsVisibleCarte] = useState({});
-  const [tableau, setTableau] = useState({});
+  const [tableau, setTableau] = useState(null);
   const [liste, setListe] = useState({ idListe: null, titreListe: '' });
-  const [carte, setCarte] = useState({ idCarte: null, titreCarte: '' })
+  const [carte, setCarte] = useState({ idCarte: null, titreCarte: '' });
 
   const params = useParams();
   const dispatch = useDispatch();
   const tableauSidebar = useSelector(state => state.modal.tableauSidebar);
 
-  // Memoize selected tableau to avoid unnecessary re-renders
+  // Memoized selected tableau
   const selectedTableau = useMemo(
     () => tableauSidebar.find(element => element.idTableau === Number(params.detailId)),
     [tableauSidebar, params.detailId]
   );
 
-  useEffect(() => setTableau(selectedTableau), [selectedTableau])
+  useEffect(() => {
+    if (selectedTableau) {
+      setTableau(selectedTableau);
+    }
+  }, [selectedTableau]);
 
-  console.table(selectedTableau)
+  // Handle updating board title
+  const handleUpdateTableau = (e) => {
+    const newTitle = e.target.value;
+    setTableau(prev => ({ ...prev, titre: newTitle }));
 
-  // Handle idListe incrementation for avoiding clashes in different tableaux
-  const tableauWithListes = useMemo(() => tableauSidebar.filter(element => element?.liste.length > 0), [tableauSidebar])
-  const idListeIncremented = useMemo(() => tableauWithListes.reduce((acc, current) => acc + current.liste.length, 0), [tableauWithListes])
+    dispatch(updateTableauToSidebar({
+      idTableau: selectedTableau.idTableau,
+      titre: newTitle
+    }));
+  };
+
+  // Calculate new list ID to avoid conflicts
+  const idListeIncremented = useMemo(() => {
+    return tableauSidebar.reduce((acc, current) => acc + (current.liste?.length || 0), 0);
+  }, [tableauSidebar]);
 
   // Handle input change for list title
-  // const handleTitreListe = (e) => setListe(prev => ({ ...prev, titreListe: e.target.value }));
+  const handleTitreListe = (e) => {
+    setListe(prev => ({ ...prev, titreListe: e.target.value }));
+  };
 
-
-  // Toggle visibility of the add-list form
+  // Toggle add-list form visibility
   const toggleVisibility = () => setIsVisible(prev => !prev);
 
-  // Dispatch action to add a new list
+  // Add new list to the board
   const handleSubmissionListe = () => {
     if (!selectedTableau || !liste.titreListe.trim()) return;
 
@@ -51,38 +67,34 @@ const BoardDetails = () => {
     setListe({ idListe: null, titreListe: '' });
   };
 
-  // const handleChangeTitreListe = (e, idListe) => {
+  // Toggle card visibility for a list
+  const handleVisibilityCarte = (idListe) => {
+    setIsVisibleCarte(prev => ({ ...prev, [idListe]: !prev[idListe] }));
+  };
 
-  //   dispatch(updateListeOfTableau({
-  //     idTableau: selectedTableau.idTableau,
-  //     idListe: idListe,
-  //     titreListe: e.target.value
-  //   }))
-  // }
+  // Handle input change for card title
+  const handleTitreCarte = (e) => {
+    setCarte(prev => ({ ...prev, titreCarte: e.target.value }));
+  };
 
-  const handleVisibilityCarte = (idListe) => setIsVisibleCarte(prev => ({ ...prev, [idListe]: !prev[idListe] }));
-
-  const handleTitreCarte = (e) => setCarte(prev => ({ ...prev, titreCarte: e.target.value }))
-
-  const handleUpdateTableau = (e) => setTableau(prev => ({ ...prev, titre: e.target.value }))
-
-
-  // Dispatch action to add a new carte in a list
+  // Add new card to a list
   const handleSubmissionCarte = (id) => {
-    const selectedListes = selectedTableau.liste.filter(liste => liste.carte.length > 0)
-    console.table(selectedListes)
-    const idCarteIncremented = selectedListes.reduce((acc, curr) => acc + curr.carte.length, 0)
-    if (!selectedListes || !carte.titreCarte.trim()) return;
+    const selectedList = selectedTableau.liste.find(liste => liste.idListe === id);
+    if (!selectedList || !carte.titreCarte.trim()) return;
+
+    const idCarteIncremented = selectedList.carte.length;
 
     dispatch(addCardToListeOfTableau({
       idTableau: selectedTableau.idTableau,
       idListe: id,
       idCarte: idCarteIncremented,
       titreCarte: carte.titreCarte
-    }))
+    }));
 
-    setCarte(prev => ({ ...prev, idCarte: prev.idCarte + 1, titreCarte: '' }))
-  }
+    setCarte({ idCarte: null, titreCarte: '' });
+  };
+
+  if (!tableau) return <LoadingIndicator />;
 
   return (
     <main className={`${selectedTableau.backgroundColor} w-3/4 min-h-screen overflow-hidden`}>
