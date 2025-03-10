@@ -4,6 +4,8 @@ import notifImg from '../assets/notifIcon.png';
 import helpImg from '../assets/helpIcon.png';
 import { NavLink } from 'react-router-dom';
 import ModalTableau from './ModalTableau';
+import { toggleOnOff } from '../store/sidebarOnOff';
+import { useDispatch } from 'react-redux';
 
 const Navbar = () => {
     const style = "w-auto h-10 px-2 flex justify-center items-center rounded-sm cursor-pointer hover:bg-stone-600";
@@ -11,10 +13,15 @@ const Navbar = () => {
 
     const modalRef = useRef()
 
+    const dispatch = useDispatch()
     const handleModalView = () => {
         if (modalRef.current) {
             modalRef.current.openDialog()
         }
+    }
+
+    const handleVisibilitySidebar = () => {
+        dispatch(toggleOnOff());
     }
 
     return (
@@ -24,7 +31,7 @@ const Navbar = () => {
             <header className="fixed top-0 left-0 w-screen flex justify-between items-center bg-zinc-800 px-3 py-2 border-b-1 border-b-stone-200/20">
                 <div className="flex justify-center items-center gap-2">
                     <div className={style}>
-                        <img className="max-w-5" src={menuImg} alt="menu image" />
+                        <img onClick={handleVisibilitySidebar} className="max-w-5" src={menuImg} alt="menu image" />
                     </div>
                     <div className={style}>
                         <h1 className="text-xl font-semibold text-stone-200"><NavLink to='/' >Trullo</NavLink></h1>
