@@ -1,12 +1,47 @@
-# React + Vite
+In this react application, users can create boards, add lists, add cards, and rearrange them dynamically.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🚀 Features
+✅ Create, update, and delete boards
+✅ Add lists to boards
+✅ Drag & Drop lists within a board
+✅ Add cards to lists
+✅ Responsive design for all screen sizes
+✅ State persistence with Redux Toolkit
 
-Currently, two official plugins are available:
+📌 Technologies Used
+Frontend: React.js, Redux Toolkit
+Drag & Drop: @hello-pangea/dnd
+Styling: Tailwind
+State Management: Redux Toolkit
+Routing: React Router
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+📦 Installation & Setup
 
-## Expanding the ESLint configuration
+1️⃣ Clone the Repository
+git clone https://github.com/yourusername/trullo.git
+cd trullo
+2️⃣ Install Dependencies
+npm install
+3️⃣ Start the Development Server
+npm run dev
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Your app will be running at http://localhost:5173/ (if using Vite) or http://localhost:3000/ (if using CRA).
+
+🛠️ Project Structure
+trullo/
+│── src/
+│   ├── components/       # Reusable UI components
+│   ├── pages/            # Board and list views
+│   ├── store/            # Redux Toolkit slices and store
+│   ├── App.js            # Main component
+│   ├── main.jsx          # Entry point
+│── public/               # Static assets
+│── package.json          # Dependencies & scripts
+│── README.md             # Documentation
+
+📝 Usage
+1️⃣ Create a new board from the sidebar.
+2️⃣ Add lists inside a board.
+3️⃣ Drag and drop lists to reorder them.
+4️⃣ Add cards inside lists.
+5️⃣ Rename and delete boards, lists, and cards easily.
