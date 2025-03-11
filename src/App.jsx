@@ -20,7 +20,7 @@ const App = () => {
       }
 
       const data = await response.json()
-      if (data) {
+      if (data.length > 0) {
         dispatch(replaceTableauToSidebar(data))
       }
     }
@@ -55,7 +55,7 @@ const App = () => {
         message: 'Données soumises avec succès'
       }))
     }
-    
+
     if(statusShowed){
       statusShowed = false;
       return;
