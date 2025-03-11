@@ -5,14 +5,22 @@ import helpImg from '../assets/helpIcon.png';
 import { NavLink } from 'react-router-dom';
 import ModalTableau from './ModalTableau';
 import { toggleOnOff } from '../store/sidebarOnOff';
+import { updateQuery } from '../store/querySlice';
 import { useDispatch, useSelector } from 'react-redux';
+import Notification from './UI/Notification';
+
 
 const Navbar = () => {
+    const [query, setQuery] = useState('')
     const [screenWidth, setScreenWidth] = useState(window.innerWidth)
     const style = "w-auto h-10 px-2 flex justify-center items-center rounded-sm cursor-pointer hover:bg-stone-600";
     const styleText = "text-sm font-semibold text-stone-200";
 
     const modalRef = useRef()
+
+    
+    // Import notification state for handling status notifications
+    const notification = useSelector(state => state.modal.notification)
 
     const isOn = useSelector(state => state.onOff.isOn)
     const dispatch = useDispatch()
@@ -35,6 +43,17 @@ const Navbar = () => {
         return () => window.removeEventListener('resize', handleShowMenuItems)
 
     }, [])
+
+    const queryString = useSelector(state => state.query.query)
+
+    const handleQuery = (e) => {
+        setQuery(e.target.value)
+        dispatch(updateQuery({ query: e.target.value }))
+    }
+
+    console.log(queryString)
+
+    const tableaux = useSelector(state => state.modal.tableauSidebar)
 
     return (
         <>
@@ -64,18 +83,36 @@ const Navbar = () => {
                         </>}
                     <button onClick={handleModalView} className="w-10 h-10 text-black/80 bg-blue-400 text-3xl rounded-sm cursor-pointer hover:bg-blue-300">+</button>
                 </div>
+                <div>
+                    {notification && <Notification status={notification.status} title={notification.title} message={notification.message} />}
+                </div>
                 <div className="flex justify-center items-center gap-2">
                     {screenWidth > 762 &&
-                        <div className="flex justify-center items-center gap-6">
-                            <input className="w-full h-10 px-2 rounded-sm text-stone-200 text-sm border-1 border-stone-200 focus:border-green-300 outline-none" type="text" placeholder='Rechercher' />
-                        </div>
-                    }
-                    <div className={style}>
-                        <img className="max-w-5" src={notifImg} alt="menu image" />
-                    </div>
-                    <div className={style}>
-                        <img className="max-w-5" src={helpImg} alt="menu image" />
-                    </div>
+                        <>
+                            <div className="flex justify-center items-center gap-6 w-[250px]">
+                                <input value={query} onChange={handleQuery} className="w-full h-10 px-2 rounded-sm text-stone-200 text-sm border-1 border-stone-200 focus:border-green-300 outline-none" type="text" placeholder='Rechercher' />
+                                {query.length > 0 &&
+                                    <div className="absolute top-13 right-39 w-[250px] bg-zinc-800 px-3 py-2 border-1 text-stone-200 mb-3">
+                                        <h2 className="text-xs mb-2 uppercase">Tableaux récents</h2>
+                                        <div className="text-xs">
+                                            {tableaux ?
+                                                tableaux.map(tableau => tableau.title === query ?
+                                                    (<div key={tableau.idTableau} className="flex justify-center items-center gap-2 mb-2">
+                                                        <div className={`${tableau.backgroundColor} rounded-xs w-8 h-6`} ></div>
+                                                        <Link to={`/boards/${tableau.idTableau}`}>{tableau.titre}</Link>
+                                                    </div>) : null) : <p className="text-xs">Aucun tableau retrouvé.</p>}
+
+                                        </div>
+                                    </div>}
+                            </div>
+
+                            <div className={style}>
+                                <img className="max-w-5" src={notifImg} alt="menu image" />
+                            </div>
+                            <div className={style}>
+                                <img className="max-w-5" src={helpImg} alt="menu image" />
+                            </div>
+                        </>}
                     <div className={style}>
                         <p className={`${styleText} bg-indigo-950 rounded-full px-2 py-1`}>ID</p>
                     </div>

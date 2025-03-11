@@ -121,8 +121,8 @@ const BoardDetails = () => {
     <main className={`${selectedTableau.backgroundColor} w-3/4 min-h-screen overflow-hidden`}>
       <div className="mt-12 text-white">
         {/* Board Title */}
-        <div className="pl-12 pt-5 w-full h-16 bg-zinc-800/60 font-bold mb-4">
-          <input type="text" className="bg-transparent outline-none cursor-pointer" value={selectedTableau?.titre || ''} onChange={handleUpdateTableau} />
+        <div className="pl-12 pt-5 h-16 bg-zinc-800/60 font-bold mb-4">
+          <input type="text" className="bg-transparent w-full outline-none cursor-pointer" value={selectedTableau?.titre || ''} onChange={handleUpdateTableau} />
         </div>
 
         {/* Lists & Add List Section */}

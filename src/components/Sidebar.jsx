@@ -4,6 +4,7 @@ import { bagIcon, tableauxIcon, modelesIcon, homeIcon, workIcon, uneIcon, member
 import { useSelector, useDispatch } from 'react-redux';
 import { removeItemToSidebar } from '../store/modalSlice.js';
 import { NavLink, Link } from 'react-router-dom';
+
 const Sidebar = () => {
     const [isVisibleWorkspace, setIsVisibleWorkspace] = useState(false);
     const [isVisibleTableau, setIsVisibleTableau] = useState(false);
@@ -35,6 +36,7 @@ const Sidebar = () => {
 
     return (
         <aside className="w-1/4 min-h-screen bg-zinc-800 pl-15 py-8 pr-8 border-r-1 border-r-stone-200/20">
+
             <div className="mt-20 border-b-1 border-b-stone-200/20">
                 <SidebarBtn onSelect={handleVisibilityTableau} source={tableauxIcon} name="array icon" ><NavLink to='/boards'>Tableaux</NavLink></SidebarBtn>
 

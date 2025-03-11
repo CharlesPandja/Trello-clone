@@ -1,11 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-const initialState = { tableauSidebar: [] }
+const initialState = { tableauSidebar: [], notification: null }
 
 const modalSlice = createSlice({
     name: 'modalTableau',
     initialState,
     reducers: {
+        // Receive payload informations about the status 
+        showNotification(state, action){
+            state.notification = action.payload;
+        },
+
+        // Replace the existing tableau
+        replaceTableauToSidebar(state, action) {
+            state.tableauSidebar = action.payload;
+        },
+
         // Add a new tableau to the sidebar
         addTableauToSidebar(state, action) {
             state.tableauSidebar.push(action.payload);
@@ -61,5 +71,5 @@ const modalSlice = createSlice({
 
 const modalReducer = modalSlice.reducer
 
-export const { addTableauToSidebar, updateTableauToSidebar, removeItemToSidebar, addListeToTableau, updateListeOfTableau, addCardToListeOfTableau } = modalSlice.actions
+export const { replaceTableauToSidebar, addTableauToSidebar, updateTableauToSidebar, removeItemToSidebar, addListeToTableau, updateListeOfTableau, addCardToListeOfTableau, showNotification } = modalSlice.actions
 export default modalReducer
